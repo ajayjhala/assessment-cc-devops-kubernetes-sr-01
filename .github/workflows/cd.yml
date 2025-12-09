@@ -26,8 +26,8 @@ jobs:
           git reset --hard origin/master
 
           cd codebase/rdicidr-0.1.0
-          docker build -t rdicird:latest .
+          docker build -t rdicidr:latest .
 
-          docker rm -f rdicird || true
+          docker rm -f rdicidr || true
 
           docker run -d --name rdicidr -p 80:8080 --restart always rdicidr:latest
