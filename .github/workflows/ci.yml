@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  ci:
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./codebase/rdicidr-0.1.0
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '15.x'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Linter
+      run: npm run lint
+
+    - name: Test
+      run: CI=true npm run test
+
+    - name: build
+      run: npm run build
