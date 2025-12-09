@@ -1,21 +1,14 @@
-FROM node:15 as builder
+FROM node:15
 
-WORKDIR
+WORKDIR /app
 
-COPY
+COPY package*.json ./
 
-RUN 
+RUN npm install
 
-COPY
+COPY . .
 
-RUN 
+ENV PORT=8080
+EXPOSE 8080
 
-FROM
-
-WORKDIR
-
-COPY
-
-RUN 
-
-ENTRYPOINT 
+CMD ["npm", "start"]
