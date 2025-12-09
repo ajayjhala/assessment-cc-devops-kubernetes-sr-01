@@ -1,15 +1,46 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ingress-wildcard-host
+  name: fsl-challenge
+  namespace: production
+  labels:
+    app: fsl-challenge
 spec:
   ports:
   - port: 8080
     name: web
   clusterIP: None
   selector:
-    app: app-name
+    app: fsl-challenge
 ---
 apiVersion: apps/v1
 kind: StatefulSet
-## TODO: Complete the rest
+metadata:
+  name: fsl-challenge
+  namespace: production
+spec:
+  selector:
+    matchLabels:
+      app: fsl-challenge # has to match .spec.template.metadata.labels
+  serviceName: "fsl-challenge"
+  replicas: 3 # by default is 1
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        app: fsl-challenge # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: fsl-challenge
+        image: fsl-challenge:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: web

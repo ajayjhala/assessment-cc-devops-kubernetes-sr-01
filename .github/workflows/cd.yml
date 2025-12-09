@@ -1,0 +1,33 @@
+name: cd
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+
+  cd:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy the app
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.EC2_HOSTS }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          set -e
+          cd /opt/rdicidr
+          git fetch origin
+          git reset --hard origin/master
+
+          cd codebase/rdicidr-0.1.0
+          docker build -t rdicird:latest .
+
+          docker rm -f rdicird || true
+
+          docker run -d --name rdicidr -p 80:8080 --restart always rdicidr:latest
